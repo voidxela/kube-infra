@@ -1,4 +1,5 @@
 # Kubernetes general infra
+**IMPORTANT** This is not intended for public use. Feel free to use or reference as you please, but be aware some manifests contain hardcoded personal variables and should not be applied without modification.
 
 ## Deploying
 ```bash
