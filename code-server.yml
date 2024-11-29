@@ -8,7 +8,7 @@ apiVersion: "acid.zalan.do/v1"
 kind: postgresql
 metadata:
   name: coder-db
-  namespace: coder
+  namespace: postgres
 spec:
   dockerImage: ghcr.io/zalando/spilo-16:3.3-p1
   teamId: coder
