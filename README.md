@@ -24,7 +24,7 @@ k apply -f rook-operator.yml
 k apply -f postgres-operator.yml
 # https://github.com/zalando/postgres-operator/blob/master/docs/quickstart.md#manual-deployment-setup-on-kubernetes
 k apply -n postgres -f postgres-operator/manifests/configmap.yaml
-k apply -n postgres -f postgres-operator/manifests/operator-service-account-rbac.yaml
+k apply -f postgres-operator/manifests/operator-service-account-rbac.yaml
 k apply -n postgres -f postgres-operator/manifests/postgres-operator.yaml
 k apply -n postgres -f postgres-operator/manifests/api-service.yaml
 # https://github.com/zalando/postgres-operator/blob/master/docs/quickstart.md#deploy-the-operator-ui

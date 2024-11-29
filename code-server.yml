@@ -1,0 +1,36 @@
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: coder-db
+  namespace: coder
+spec:
+  dockerImage: ghcr.io/zalando/spilo-16:3.3-p1
+  teamId: coder
+  numberOfInstances: 2
+  users:
+    coder:
+    - superuser
+    - createdb
+  allowedSourceRanges:
+  - 127.0.0.1/32
+  databases:
+    coder: coder
+  preparedDatabases:
+    coder:
+      defaultUsers: true
+      extensions:
+        pg_partman: public
+        pgcrypto: public
+      schemas:
+        data: {}
+        history:
+          defaultRoles: true
+          defaultUsers: false
+  postgresql:
+    version: "16"
+    parameters:
+      shared_buffers: "32MB"
+      max_connections: "10"
+      log_statement: "all"
+  volume:
+    size: 40Gi
