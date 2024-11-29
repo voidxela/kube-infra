@@ -1,0 +1,93 @@
+# 1. First, create a namespace for Rook
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: rook
+---
+# 2. Rook Operator deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rook-operator
+  namespace: rook
+  labels:
+    operator: rook
+    storage-backend: ceph
+spec:
+  selector:
+    matchLabels:
+      app: rook-operator
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: rook-operator
+    spec:
+      serviceAccountName: rook-system
+      containers:
+      - name: rook-operator
+        image: rook/ceph:v1.12.6
+        args: ["ceph", "operator"]
+        env:
+        - name: ROOK_HOSTPATH_REQUIRES_PRIVILEGED
+          value: "true"
+---
+# 3. Ceph Cluster configuration
+apiVersion: ceph.rook.io/v1
+kind: CephCluster
+metadata:
+  name: rook
+  namespace: rook
+spec:
+  cephVersion:
+    image: quay.io/ceph/ceph:v17.2.8
+  dataDirHostPath: /var/lib/rook
+  mon:
+    count: 1
+    allowMultiplePerNode: false
+  mgr:
+    count: 1
+  dashboard:
+    enabled: true
+    ssl: true
+  storage:
+    useAllNodes: false
+    useAllDevices: false
+    nodes:
+    - name: "big-storage-node"  # Replace with your actual node name
+      devices:
+      - name: "/dev/nvme0n1"    # Replace with your actual NVMe device path
+  network:
+    provider: host
+---
+# 4. Storage Class for RWO volumes
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ceph
+provisioner: rook.rbd.csi.ceph.com
+parameters:
+  clusterID: rook
+  pool: replicapool
+  imageFormat: "2"
+  imageFeatures: layering
+  csi.storage.k8s.io/provisioner-secret-name: rook-csi-rbd-provisioner
+  csi.storage.k8s.io/provisioner-secret-namespace: rook
+  csi.storage.k8s.io/node-stage-secret-name: rook-csi-rbd-node
+  csi.storage.k8s.io/node-stage-secret-namespace: rook
+  csi.storage.k8s.io/fstype: ext4
+---
+# 5. Storage Class for RWX volumes using CephFS
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: cephfs
+provisioner: rook.cephfs.csi.ceph.com
+parameters:
+  clusterID: rook
+  fsName: xela-cephfs
+  pool: xela-cephfs0
+  csi.storage.k8s.io/provisioner-secret-name: rook-csi-cephfs-provisioner
+  csi.storage.k8s.io/provisioner-secret-namespace: rook
+  csi.storage.k8s.io/node-stage-secret-name: rook-csi-cephfs-node
+  csi.storage.k8s.io/node-stage-secret-namespace: rook
