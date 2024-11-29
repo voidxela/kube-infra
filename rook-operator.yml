@@ -31,7 +31,6 @@ spec:
         - name: ROOK_HOSTPATH_REQUIRES_PRIVILEGED
           value: "true"
 ---
-# 3. Ceph Cluster configuration
 apiVersion: ceph.rook.io/v1
 kind: CephCluster
 metadata:
@@ -70,7 +69,7 @@ parameters:
   imageFormat: "2"
   imageFeatures: layering
   csi.storage.k8s.io/provisioner-secret-name: rook-csi-rbd-provisioner
-  csi.storage.k8s.io/provisioner-secret-namespace: rook
+  csi.storage.k8s.io/provisioner-secret-namespace: rookq
   csi.storage.k8s.io/node-stage-secret-name: rook-csi-rbd-node
   csi.storage.k8s.io/node-stage-secret-namespace: rook
   csi.storage.k8s.io/fstype: ext4

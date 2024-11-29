@@ -1,0 +1,24 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: postgres
+---
+kind: Ingress
+apiVersion: networking.k8s.io/v1
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: easyhaproxy-ingress
+  name: postgres-operator-ingress
+  namespace: postgres
+spec:
+  rules:
+  - host: sql.xela.foo
+    http:
+      paths:
+      - backend:
+          service:
+            name: postgres-operator-ui
+            port:
+              number: 80
+        pathType: ImplementationSpecific

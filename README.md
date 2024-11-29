@@ -21,4 +21,12 @@ alias k="microk8s kubectl"  # add to ~/.bash_aliases
 k apply -f cluster-issuer.yml
 k apply -f portainer-ingress.yml
 k apply -f rook-operator.yml
+k apply -f postgres-operator.yml
+# https://github.com/zalando/postgres-operator/blob/master/docs/quickstart.md#manual-deployment-setup-on-kubernetes
+k apply -n postgres -f postgres-operator/manifests/configmap.yaml
+k apply -n postgres -f postgres-operator/manifests/operator-service-account-rbac.yaml
+k apply -n postgres -f postgres-operator/manifests/postgres-operator.yaml
+k apply -n postgres -f postgres-operator/manifests/api-service.yaml
+# https://github.com/zalando/postgres-operator/blob/master/docs/quickstart.md#deploy-the-operator-ui
+k apply -n postgres -f postgres-operator/ui/manifests/
 ```
